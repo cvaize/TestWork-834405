@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
+use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+JsonApiRoute::server('v1')
+    ->prefix('api/v1')
+    ->resources(function (ResourceRegistrar $server) {
+        $server->resource('products', JsonApiController::class);
+        $server->resource('categories', JsonApiController::class);
+    });

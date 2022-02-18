@@ -55,12 +55,13 @@
               <div
                 class="border-l border-r border-b border-block rounded-b-lg py-4 px-2 flex flex-col"
               >
-                <div class="flex w-full mb-auth">
+                <div class="flex w-full">
                   <div class="font-bold">Программа HMO</div>
                   <div class="whitespace-nowrap ml-auto pl-2">
                     {{ cartTotal.toLocaleString("ru-RU") }} ₽
                   </div>
                 </div>
+                <div class="w-full mt-2 mb-auto">Описание программы</div>
                 <div class="w-full mt-4 flex">
                   <btn class="bg-blueberry text-white border-blueberry mr-auto">
                     В корзину
