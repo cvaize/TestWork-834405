@@ -127,7 +127,7 @@ const headers = {
 };
 
 const defaultServer = "v1";
-const defaultBaseUrl = "http://test.loc/api";
+const defaultBaseUrl = "/api";
 
 type GeneratedRequest<R> = { abort(): void; start(): Promise<R> };
 
