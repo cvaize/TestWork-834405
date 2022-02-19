@@ -19,10 +19,3 @@ use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
 Route::get('/', function () {
     return view('welcome');
 });
-
-JsonApiRoute::server('v1')
-    ->prefix('api/v1')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource('products', JsonApiController::class);
-        $server->resource('categories', JsonApiController::class);
-    });

@@ -118,16 +118,16 @@ function serialize<R extends v1TransferEntity>(
     resolve(body);
   });
 }
-const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+// const csrfMeta = document.querySelector('meta[name="csrf-token"]');
 const headers = {
-  "X-CSRF-TOKEN": csrfMeta ? csrfMeta.getAttribute("content") : "",
+  // "X-CSRF-TOKEN": csrfMeta ? csrfMeta.getAttribute("content") : "",
   Accept: "application/json",
   "Access-Control-Allow-Credentials": "true",
   "Content-Type": "application/vnd.api+json",
 };
 
 const defaultServer = "v1";
-const defaultBaseUrl = "/api";
+const defaultBaseUrl = "http://test.loc/api";
 
 type GeneratedRequest<R> = { abort(): void; start(): Promise<R> };
 

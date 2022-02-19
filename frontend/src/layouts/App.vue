@@ -18,7 +18,17 @@
         </ul>
       </div>
     </header>
-    <main class="flex-1 w-full flex flex-col">
+    <main v-if="errorHttpCode" class="flex-1 w-full flex flex-col">
+      <template v-if="$slots.error">
+        <slot name="error" :error-http-code="errorHttpCode" />
+      </template>
+      <div v-else class="container text-center text-2xl">
+        <h1 v-if="errorHttpCode === 404">Не найдено!</h1>
+        <h1 v-else-if="errorHttpCode === 500">Ошибка сервера!</h1>
+        <h1 v-else>Ошибка с кодом {{ errorHttpCode }}</h1>
+      </div>
+    </main>
+    <main v-else class="flex-1 w-full flex flex-col">
       <slot />
     </main>
     <footer class="flex-shrink-0 w-full">
@@ -47,25 +57,30 @@
   </div>
 </template>
 
+<script lang="ts" setup>
+import { defineProps } from "vue";
+
+const menu = [
+  {
+    label: "Главная",
+    to: "/",
+  },
+  {
+    label: "Каталог",
+    to: "/catalog",
+  },
+];
+let year = new window.Date().getFullYear();
+
+defineProps({
+  errorHttpCode: Number,
+});
+</script>
+
 <script lang="ts">
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "AppLayout",
-  setup() {
-    const menu = [
-      {
-        label: "Главная",
-        to: "/",
-      },
-      {
-        label: "Каталог",
-        to: "/catalog",
-      },
-    ];
-    let year = new window.Date().getFullYear();
-
-    return { menu, year };
-  },
 });
 </script>
