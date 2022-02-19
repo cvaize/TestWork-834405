@@ -11,6 +11,7 @@ use LaravelJsonApi\Eloquent\Fields\Number;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsTo;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsToMany;
 use LaravelJsonApi\Eloquent\Fields\Str;
+use LaravelJsonApi\Eloquent\Filters\Scope;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
@@ -50,7 +51,7 @@ class ProductSchema extends Schema
 
             Number::make('price'),
             Number::make('ordering')->sortable(),
-            Number::make('category_id')->sortable(),
+            Number::make('categoryId')->sortable(),
 
             BelongsTo::make('category')->type('categories'),
         ];
@@ -65,7 +66,8 @@ class ProductSchema extends Schema
     {
         return [
             WhereIdIn::make($this),
-            Where::make('name'),
+            Scope::make('search'),
+            Where::make('categoryId'),
         ];
     }
 

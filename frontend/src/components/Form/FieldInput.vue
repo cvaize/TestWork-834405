@@ -2,6 +2,8 @@
   <input
     class="field"
     @input="$emit('input', $event)"
+    @change="$emit('change', $event)"
+    @keydown="$emit('keydown', $event)"
     :value="value"
     :type="type || 'text'"
     :disabled="disabled"

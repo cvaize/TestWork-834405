@@ -26,7 +26,9 @@
         <breadcrumb-item>
           <router-link to="/catalog"> Каталог </router-link>
         </breadcrumb-item>
-        <breadcrumb-item active> Программа </breadcrumb-item>
+        <breadcrumb-item active>
+          {{ product?.name || "Программа" }}
+        </breadcrumb-item>
       </breadcrumbs-list>
       <div class="flex flex-wrap -mx-4">
         <div class="px-4 w-full xs:max-w-[300px] mb-4">
@@ -41,10 +43,14 @@
         <div class="px-4 w-full xs:max-w-[calc(100%-300px)]">
           <div class="max-w-[600px]">
             <h1 class="text-xl font-bold">{{ product?.name }}</h1>
-            <h3 class="mb-4 text-sm">
+            <div class="text-sm">
               <span class="opacity-50">Категория:</span>
               {{ product?.category.name }}
-            </h3>
+            </div>
+            <div class="mb-4 text-sm">
+              <span class="opacity-50">Цена:</span>
+              {{ product?.price.toLocaleString("ru-RU") }} ₽
+            </div>
             <div class="opacity-80 text-sm">
               {{ product?.description }}
             </div>
@@ -108,9 +114,10 @@ const loadProduct = async () => {
       v1ProductTransferEntity,
       v1Product
     >(productTransferEntity);
-    console.log("product", product);
   } catch (e: any) {
-    errorHttpCode.value = e.status || 500;
+    if (e.name !== "AbortError") {
+      errorHttpCode.value = e.status || 500;
+    }
     console.error(e);
   }
 

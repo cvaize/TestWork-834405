@@ -39,7 +39,7 @@ export type v1Product = v1DefaultModel & {
   description?: string;
   price?: number;
   ordering?: number;
-  category_id?: number;
+  categoryId?: number;
   category?: v1Category;
 };
 
@@ -48,7 +48,7 @@ export enum v1ProductAttributes {
   description = "description",
   price = "price",
   ordering = "ordering",
-  category_id = "category_id",
+  categoryId = "categoryId",
   category = "category",
 }
 
@@ -58,7 +58,8 @@ export enum v1ProductRelations {
 
 export enum v1ProductFilters {
   id = "id",
-  name = "name",
+  search = "search",
+  categoryId = "categoryId",
 }
 
 export type v1ProductTransferEntity = v1TransferEntity & {
@@ -68,7 +69,7 @@ export type v1ProductTransferEntity = v1TransferEntity & {
     description?: string;
     price?: number;
     ordering?: number;
-    category_id?: number;
+    categoryId?: number;
   };
   relationships?: {
     category: {
