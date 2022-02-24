@@ -1,11 +1,11 @@
 <template>
-  <input
+  <textarea
     class="field"
     @input="$emit('input', $event)"
     @change="$emit('change', $event)"
     @keydown="$emit('keydown', $event)"
     :value="value"
-    :type="type || 'text'"
+    :rows="rows"
     :disabled="disabled"
     :readonly="readonly"
     :placeholder="placeholder"
@@ -16,8 +16,8 @@
 import { defineEmits, defineProps } from "vue";
 
 defineProps({
-  value: [String, Number],
-  type: String,
+  value: String,
+  rows: String,
   placeholder: String,
   disabled: Boolean,
   readonly: Boolean,

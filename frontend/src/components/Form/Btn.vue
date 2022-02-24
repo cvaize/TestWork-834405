@@ -148,4 +148,14 @@ defineEmits(["click"]);
     box-shadow: inset 0 3px 6px rgb(0 0 0 / 20%);
   }
 }
+
+.btn-blueberry-white {
+  @apply bg-blueberry text-white border-blueberry hover:not-disabled:text-white hover:not-disabled:border-blueberry hover:not-disabled:bg-blueberry is-active:not-disabled:text-white is-active:not-disabled:border-blueberry is-active:not-disabled:bg-blueberry;
+
+  box-shadow: inset 0 0 0 rgb(0 0 0 / 20%);
+
+  &.active {
+    box-shadow: inset 0 3px 6px rgb(0 0 0 / 20%);
+  }
+}
 </style>

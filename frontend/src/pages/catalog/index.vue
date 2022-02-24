@@ -51,9 +51,9 @@
               <div class="mb-2">Программы НМО</div>
               <btn-group>
                 <FieldInput
-                  :value="search"
                   class="rounded-r-none"
                   placeholder="Поиск"
+                  :value="search"
                   @input="search = $event.target.value"
                   @change="
                     search = $event.target.value;
@@ -104,8 +104,16 @@
             >
               {{ category.name }}
             </btn>
+            <btn
+              class="mt-3 block w-full"
+              color="blueberry-white"
+              @click="productForm.show = true"
+            >
+              Добавить товар
+            </btn>
           </div>
         </div>
+
         <div class="px-4 w-full sm:max-w-[calc(100%-300px)]">
           <div class="-mx-4 flex flex-wrap">
             <div
@@ -156,12 +164,110 @@
                     Подробнее
                   </btn>
                 </div>
+                <div class="w-full mt-2 flex">
+                  <btn
+                    class="mr-auto"
+                    color="blueberry-white"
+                    :loading="
+                      requests.loading[
+                        getProductIndex(product, FORM_ACTION_NAME)
+                      ]
+                    "
+                    @click="handleUpdateProduct(product)"
+                  >
+                    Изменить
+                  </btn>
+                  <btn
+                    color="pastel-red-sunset-orange"
+                    :loading="
+                      requests.loading[
+                        getProductIndex(product, DELETE_ACTION_NAME)
+                      ]
+                    "
+                    @click="handleDeleteProduct(product)"
+                  >
+                    Удалить
+                  </btn>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <modal :show="productForm.show">
+      <div
+        class="bg-white rounded shadow whitespace-normal p-4 max-w-[400px] w-full m-auto"
+      >
+        <div class="mb-2 font-bold">
+          {{
+            productForm.product
+              ? `Изменить товар #${productForm.product.id}`
+              : "Добавить товар"
+          }}
+        </div>
+        <label class="mb-2 block">
+          <span class="font-bold text-sm">Название*</span>
+          <field-input
+            :value="productForm.values.name"
+            @input="productForm.values.name = $event.target.value"
+          />
+        </label>
+        <label class="mb-2 block">
+          <span class="font-bold text-sm">Описание*</span>
+          <field-textarea
+            :value="productForm.values.description"
+            @input="productForm.values.description = $event.target.value"
+          />
+        </label>
+        <label class="mb-2 block">
+          <span class="font-bold text-sm">Цена</span>
+          <field-input
+            type="number"
+            :value="productForm.values.price"
+            @input="productForm.values.price = $event.target.value"
+          />
+        </label>
+        <label class="mb-2 block">
+          <span class="font-bold text-sm">Категория</span>
+          <field-select
+            :value="productForm.values.categoryId"
+            :options="categories.map((category: v1Category) => ({label: category.name, value: category.id}))"
+            @change="productForm.values.categoryId = $event.target.value"
+          />
+        </label>
+        <div class="mt-4 flex justify-between">
+          <btn
+            class="mr-2"
+            color="white-cadet-blue-crayola"
+            @click="productForm.show = false"
+          >
+            {{
+              requests.loading[
+                getProductIndex(productForm.product, FORM_ACTION_NAME)
+              ]
+                ? "Закрыть"
+                : "Отмена"
+            }}
+          </btn>
+          <btn
+            color="apple-may-green"
+            :loading="
+              requests.loading[
+                getProductIndex(productForm.product, FORM_ACTION_NAME)
+              ]
+            "
+            :disabled="
+              !productForm.values.name || !productForm.values.description
+            "
+            @click="handleSubmitProductForm"
+          >
+            {{ productForm.product ? "Изменить" : "Создать" }}
+          </btn>
+        </div>
+      </div>
+    </modal>
   </AppLayout>
 </template>
 
@@ -188,6 +294,11 @@ import {
 } from "@/typings/v1-jsonapi";
 import { useStore } from "vuex";
 import { pluralize } from "@/utils/text";
+import FieldTextarea from "@/components/Form/FieldTextarea.vue";
+import FieldSelect from "@/components/Form/FieldSelect.vue";
+import { cloneDeep } from "lodash";
+import { JsonapiOneTransfer } from "@/typings/app";
+import Modal from "@/components/Modal.vue";
 
 const store = useStore();
 
@@ -207,6 +318,127 @@ let products = ref<v1Product[]>([]);
 let loadingProducts = ref<boolean>(true);
 let loadingCategories = ref<boolean>(true);
 let errorHttpCode = ref<number>(0);
+
+const FORM_ACTION_NAME = "form";
+const DELETE_ACTION_NAME = "delete";
+
+type ProductForm = {
+  show: boolean;
+  product: v1Product | null;
+  values: {
+    name?: string;
+    description?: string;
+    price?: number;
+    ordering?: number;
+    categoryId?: number;
+  };
+};
+
+type Requests = {
+  loading: {
+    [index: string]: boolean;
+  };
+  abort: {
+    [index: string]: () => void;
+  };
+};
+
+let defaultProductForm: ProductForm = {
+  show: false,
+  product: null,
+  values: {
+    name: "",
+    description: "",
+    price: 0,
+    ordering: 0,
+    categoryId: 1,
+  },
+};
+let requests = ref<Requests>({
+  loading: {},
+  abort: {},
+});
+let productForm = ref<ProductForm>(cloneDeep(defaultProductForm));
+
+const getProductIndex = (product: v1Product | null, name: string): string => {
+  return `product-${product?.id || "create"}-${name}`;
+};
+
+const handleSubmitProductForm = async () => {
+  const index = getProductIndex(productForm.value.product, FORM_ACTION_NAME);
+
+  if (requests.value.loading[index]) return;
+
+  requests.value.loading[index] = true;
+
+  let body: JsonapiOneTransfer<v1ProductTransferEntity> = {
+    data: {
+      type: v1JsonapiTypes.Product,
+      attributes: {
+        name: String(productForm.value.values.name),
+        description: String(productForm.value.values.description),
+        price: Number(productForm.value.values.price || 0),
+        categoryId: Number(productForm.value.values.categoryId),
+      },
+    },
+  };
+
+  try {
+    if (productForm.value.product) {
+      body.data.id = productForm.value.product.id;
+      await jsonapi.updateOne<v1ProductTransferEntity>(body).start();
+    } else {
+      await jsonapi.storeOne<v1ProductTransferEntity>(body).start();
+    }
+    productForm.value = cloneDeep(defaultProductForm);
+  } catch (e) {
+    console.error(e);
+  }
+
+  try {
+    await loadProducts();
+  } catch (e) {
+    console.error(e);
+  }
+
+  requests.value.loading[index] = false;
+};
+
+function handleUpdateProduct(product: v1Product) {
+  productForm.value.values.name = product.name;
+  productForm.value.values.description = product.description;
+  productForm.value.values.price = product.price;
+  productForm.value.values.categoryId = product.categoryId;
+  productForm.value.values.ordering = product.ordering;
+  productForm.value.product = product;
+  productForm.value.show = true;
+}
+
+async function handleDeleteProduct(product: v1Product) {
+  const index = getProductIndex(product, DELETE_ACTION_NAME);
+
+  if (requests.value.loading[index]) return;
+
+  const is = confirm(`Удалить товар #${product.id}`);
+
+  if (!is) return;
+
+  requests.value.loading[index] = true;
+
+  try {
+    await jsonapi.deleteOne(v1JsonapiTypes.Product, String(product.id)).start();
+  } catch (e) {
+    console.error(e);
+  }
+
+  try {
+    await loadProducts();
+  } catch (e) {
+    console.error(e);
+  }
+
+  requests.value.loading[index] = false;
+}
 
 const loadProducts = async () => {
   productFetcherDeserializer.abort();
@@ -266,7 +498,6 @@ const loadCategories = async () => {
         ].join(","),
       },
     });
-    console.log("categories", categories);
   } catch (e: any) {
     if (e.name !== "AbortError") {
       errorHttpCode.value = e.status || 500;
@@ -287,5 +518,4 @@ onUnmounted(() => {
   productFetcherDeserializer.destroy();
   categoryFetcherDeserializer.destroy();
 });
-const cartTotal = 20022;
 </script>

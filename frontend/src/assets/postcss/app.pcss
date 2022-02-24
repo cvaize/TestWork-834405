@@ -1,0 +1,41 @@
+@keyframes spinAround {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(359deg); }
+}
+#app{
+    .field {
+        @apply relative h-[35px] min-h-[35px] text-base px-[0.75rem] text-yankees-blue bg-white rounded border-light-gray w-full block border outline-none focus:border-auro-metal-saurus focus:not-disabled:z-[1];
+
+        &[type="date"]::-webkit-inner-spin-button,
+        &[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            margin: 0;
+        }
+
+        &:disabled,
+        &.disabled {
+            @apply opacity-50 pointer-events-none;
+        }
+    }
+
+    .field-div {
+        @apply relative h-[35px] min-h-[35px];
+    }
+
+    textarea.field {
+        @apply h-auto py-[0.45rem];
+    }
+
+    select.field {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        padding-right: 30px;
+
+        &.loading {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3e%3cpath fill='%23343a40' d='M25,5A20.14,20.14,0,0,1,45,22.88a2.51,2.51,0,0,0,2.49,2.26h0A2.52,2.52,0,0,0,50,22.33a25.14,25.14,0,0,0-50,0,2.52,2.52,0,0,0,2.5,2.81h0A2.51,2.51,0,0,0,5,22.88,20.14,20.14,0,0,1,25,5Z'%3e%3canimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.5s' repeatCount='indefinite'/%3e%3c/path%3e%3c/svg%3e");
+        }
+    }
+}

@@ -10,12 +10,14 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "jsonapi-serializer-cvaize": "^3.7.8",
+    "lodash": "^4.17.21",
     "vanilla-js-url": "^3.0.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.178",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
